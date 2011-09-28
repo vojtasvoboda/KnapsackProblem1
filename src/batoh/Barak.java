@@ -30,4 +30,12 @@ public class Barak extends ItemsContainer {
         return true;
     }
 
+    /**
+     * Vrati pocet polozek
+     * @return
+     */
+    public int getItemsCount() {
+        return this.polozky.size();
+    }
+
 }

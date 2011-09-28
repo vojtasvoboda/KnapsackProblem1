@@ -5,7 +5,6 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -17,7 +16,7 @@ public class Main {
     /* nosnost batohu pro testovaci funkci */
     final static int NOSNOST = 32;
     /* maximalni pocet nactenych instanci */
-    final static int MAX_INSTANCES = 2;
+    final static int MAX_INSTANCES = 1;
 
     /**
      * Polozky v baraku lze nacist bud z testovaci mnoziny - funkce loadTestItems,
@@ -43,7 +42,6 @@ public class Main {
         String[][] instanceProblemu = loadFile(4);
 
         /* projdeme vsechny instance a vypocitame je */
-        List<BatohItem> polozkyVbatohu = null;
         for ( int i = 0; i < instanceProblemu.length && i < MAX_INSTANCES; i++ ) {
             /* naplnime barak polozkami */
             System.out.println("Startuji plneni baraku ze vstupni instance cislo " + instanceProblemu[i][0]);
@@ -51,10 +49,13 @@ public class Main {
             /* nastavime nosnost batohu */
             batoh.setNosnost(Integer.parseInt(instanceProblemu[i][2]));
             /* ziskej polozky v batohu z baraku */
-            polozkyVbatohu = greedyAlg(barak, batoh);
+            // GreedyAlgorithm alg = new GreedyAlgorithm(barak, batoh);
+            BruteForceAlgorithm alg = new BruteForceAlgorithm(barak, batoh);
+            alg.computeStolenItems();
             /* vypiseme polozky */
             System.out.println("Vypis polozek v batohu instance " + instanceProblemu[i][0]);
-            vypisPolozky(polozkyVbatohu);
+            // vypisPolozky(polozkyVbatohu);
+            batoh.writeItems();
             System.out.println("Podarilo se ukrast veci v hodnote " + batoh.getAktualniCena() +
                                " s vytizenim batohu " + batoh.getAktualniZatizeni() + "/" + batoh.getNosnost());
             /* vycistime batoh i barak pred dalsi instanci */
@@ -66,43 +67,6 @@ public class Main {
         long endTime = System.currentTimeMillis();
         startTime = endTime - startTime;
         System.out.println("Vypocet trval " + startTime + "ms");
-    }
-
-    /**
-     * Implementace hladoveho algoritmu, ktery vraci polozky, ktere
-     * se podarili ukrast
-     * @param barak
-     * @param batoh
-     * @return List<BatohItem> - polozky batohu
-     */
-    public static List<BatohItem> greedyAlg(Barak barak, Batoh batoh) {
-        Iterator iterator = barak.getPolozky().iterator();
-        BatohItem item = null;
-        /* prochazime vsechny polozky, dokud neni batoh plny */
-        while( !batoh.isFull() && iterator.hasNext() ) {
-            item = (BatohItem) iterator.next();
-            System.out.println("Zkusim ukrast polozku {" + item.getHodnota() + "," + item.getVaha() + "," + item.getPomer() + "}, akt zatizeni je " + batoh.getAktualniZatizeni());
-            if ( !batoh.addItem(item) ) {
-                System.out.println("Polozka {" + item.getHodnota() + "," + item.getVaha() + "," + item.getPomer() + "} se uz nevejde do batohu.");
-                // break; // zkousim pridavat az dokonce
-            }
-        }
-        /* vratime ukradene polozky */
-        return batoh.getPolozky();
-    }
-
-    /**
-     * Vypise polozky batohu/baraku
-     * @param polozky
-     */
-    public static void vypisPolozky(List<BatohItem> polozky) {
-        Iterator iterator = polozky.iterator();
-        BatohItem item = null;
-        while ( iterator.hasNext() ) {
-            item = (BatohItem) iterator.next();
-            System.out.print("{" + item.getHodnota() + "," + item.getVaha() + "," + item.getPomer() + "},");
-        }
-        System.out.println("");
     }
 
     /**
@@ -127,7 +91,7 @@ public class Main {
             int idecko = 0;
             // Read File Line By Line
             while ((strLine = br.readLine()) != null) {
-                System.out.println("Ctu radek " + strLine + ", ktery bude na indexu " + idecko);
+                // System.out.println("Ctu radek " + strLine + ", ktery bude na indexu " + idecko);
                 String[] radek = strLine.split(" ");
                 instance[idecko] = radek;
                 idecko++;

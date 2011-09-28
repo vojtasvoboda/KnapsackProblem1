@@ -2,6 +2,7 @@ package batoh;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -43,6 +44,20 @@ public class ItemsContainer {
      */
     public void clear() {
         this.polozky.clear();
+    }
+
+    /**
+     * Vypise polozky batohu/baraku
+     * @param polozky
+     */
+    public void writeItems() {
+        Iterator iterator = this.polozky.iterator();
+        BatohItem item = null;
+        while ( iterator.hasNext() ) {
+            item = (BatohItem) iterator.next();
+            System.out.print("{" + item.getHodnota() + "," + item.getVaha() + "," + item.getPomer() + "},");
+        }
+        System.out.println("");
     }
 
 }
