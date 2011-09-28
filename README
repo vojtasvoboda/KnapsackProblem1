@@ -1,0 +1,43 @@
+Řešení problému batohu metodou hrubé síly a jednoduchou heuristikou
+
+Naprogramujte řešení problému batohu hrubou silou. Na zkušebních datech pozorujte závislost výpočetního času na n.
+Naprogramujte řešení problému batohu heuristikou podle poměru cena/váha. Pozorujte
+- závislost výpočetního času na n. Grafy jsou vítány (i pro exaktní metodu).
+- průměrnou a maximální relativní chybu (tj. zhoršení proti exaktní metodě)
+
+Poznámky
+
+Počítejte pouze relativní chybu. Absolutní chyba nic neříká!
+Zkušební data obsahují sady po 50 instancí. Použijte tedy průměrování. Ovšem průměrujte rozumně, zejména při výpočtu relativní chyby. Zde máme dvě možnosti:
+- Vyřeším všech 50 instancí hrubou silou, sečtu ceny. Poté vyřeším všech 50 instancí pomocí heuristiky, sečtu ceny. Z těchto dvou čísel pak vypočítám relativní chybu.
+- Každou z 50 instancí vyřeším hrubou silou a heuristikou, z těchto dvou cen vypočítám relativní chybu. Tyto rel. chyby zprůměruji.
+- 1. možnost je pravděpodobně implementačně jednodušší, ale je pochopitelně špatně. Uvědomte si, co se stane, když jedna z 50 instancí bude obsahovat 1000x větší ceny, než ty ostatní.
+Relativní chyba se pro maximalizační problémy počítá takto: ε = ( C(OPT)-C(APX) ) / C(OPT)
+- kde C(OPT) je cena optima
+- a C(APX) je cena přibližného řešení
+
+Problém batohu a zkušební instance
+
+Je dáno:
+    celé číslo n (počet věcí)
+    celé číslo M (kapacita batohu)
+    konečná množina V={v1, v2, … ,vn } (hmotnosti věcí)
+    konečná množina C={c1, c2, … ,cn } (ceny věcí)
+
+Nejznámější varianta je optimalizační. Pokud se mluví o „problému batohu“ bez bližšího určení, většinou se rozumí tato verze.
+
+Zkonstruujte množinu X={x1, x2, … ,xn }, kde každé xi je 0 nebo 1, tak, aby
+    platilo v1x1+v2x2 + … + vnxn ≤ M (batoh nebyl přetížen).
+    a výraz c1x1+c2x2 + … + cnxn nabýval maximální hodnoty pro všechny takové množiny (cena věcí v batohu byla maximální).
+
+Zkušební instance:
+
+Instance problému jsou popsány textovými soubory. Každý soubor má jméno knap_n.inst.dat, kde n je velikost instance. Každý řádek popisuje jednu instanci. Skládá se z čísel a oddělujících mezer. Každá instance je identifikována jedinečným číslem (ID), obsahuje počet věcí (n) a kapacitu batohu (M) a dále váhy a ceny jednotlivých věcí.. Je zakončena znakem nový řádek. Posloupnost je následující:
+ID n M váha cena váha cena ...
+
+Archiv instancí: soubory /data/*.inst.dat
+
+Pro každou instanci je známo jedno optimální řešení. Pro každou věc je udáno, zda je do batohu vložena (1) nebo ne (0). Pořadí je stejné jako v zadání. Struktura řádku je následující:
+ID n cena řešení 0/1 0/1 ...
+
+Archiv řešení: soubory /data/*.sol.dat
