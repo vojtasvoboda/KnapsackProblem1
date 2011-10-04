@@ -5,7 +5,6 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.util.List;
 
 /**
  *
@@ -16,7 +15,7 @@ public class Main {
     /* nosnost batohu pro testovaci funkci */
     final static int NOSNOST = 32;
     /* maximalni pocet nactenych instanci */
-    final static int MAX_INSTANCES = 1;
+    final static int MAX_INSTANCES = 60;
 
     /**
      * Polozky v baraku lze nacist bud z testovaci mnoziny - funkce loadTestItems,
@@ -24,9 +23,6 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-
-        /* zapnu mereni casu */
-        long startTime = System.currentTimeMillis();
 
         /* definuju si polozky v baraku */
         Barak barak = new Barak();
@@ -41,28 +37,42 @@ public class Main {
         /* soubory jsou: 4, 10, 15, 20, 22, 25, 27, 30, 32, 35, 37, 40 */
         String[][] instanceProblemu = loadFile(4);
 
-        /* projdeme vsechny instance a vypocitame je */
-        for ( int i = 0; i < instanceProblemu.length && i < MAX_INSTANCES; i++ ) {
-            /* naplnime barak polozkami */
-            System.out.println("Startuji plneni baraku ze vstupni instance cislo " + instanceProblemu[i][0]);
-            loadItemFromFile(barak, instanceProblemu[i]);
-            /* nastavime nosnost batohu */
-            batoh.setNosnost(Integer.parseInt(instanceProblemu[i][2]));
-            /* ziskej polozky v batohu z baraku */
-            // GreedyAlgorithm alg = new GreedyAlgorithm(barak, batoh);
-            BruteForceAlgorithm alg = new BruteForceAlgorithm(barak, batoh);
-            alg.computeStolenItems();
-            /* vypiseme polozky */
-            System.out.println("Vypis polozek v batohu instance " + instanceProblemu[i][0]);
-            // vypisPolozky(polozkyVbatohu);
-            batoh.writeItems();
-            System.out.println("Podarilo se ukrast veci v hodnote " + batoh.getAktualniCena() +
-                               " s vytizenim batohu " + batoh.getAktualniZatizeni() + "/" + batoh.getNosnost());
-            /* vycistime batoh i barak pred dalsi instanci */
-            barak.clear();
-            batoh.clear();
-        }
+        /* zapnu mereni casu */
+        long startTime = System.currentTimeMillis();
 
+        /* spustime cely vypocet nekolikrat */
+        for (int a = 0; a < 100; a++) {
+            /* projdeme vsechny instance a vypocitame je */
+            for ( int i = 0; (i < instanceProblemu.length) && (i < MAX_INSTANCES); i++ ) {
+
+                /* naplnime barak polozkami */
+                System.out.println("Startuji plneni baraku ze vstupni instance cislo " + instanceProblemu[i][0]);
+                /* preskocime prazdne radky */
+                if (instanceProblemu[i][0] == null) break;
+                loadItemFromFile(barak, instanceProblemu[i]);
+
+                /* nastavime nosnost batohu */
+                batoh.setNosnost(Integer.parseInt(instanceProblemu[i][2]));
+
+                /* ziskej polozky v batohu z baraku */
+                // System.out.println("Startuji Greedy algoritmus.");
+                // GreedyAlgorithm algGr = new GreedyAlgorithm(barak, batoh);
+                // algGr.computeStolenItems();
+                System.out.println("Startuji BruteForce algoritmus");
+                BruteForceAlgorithm algBf = new BruteForceAlgorithm(barak, batoh);
+                algBf.computeStolenItems();
+
+                /* vypiseme polozky */
+                // System.out.println("Vypis polozek v batohu instance " + instanceProblemu[i][0]);
+                // batoh.writeItems();
+
+                System.out.println("Podarilo se ukrast veci v hodnote " + batoh.getAktualniCena() +
+                                   " s vytizenim batohu " + batoh.getAktualniZatizeni() + "/" + batoh.getNosnost());
+                /* vycistime batoh i barak pred dalsi instanci */
+                barak.clear();
+                batoh.clear();
+            }
+        }
         /* konec mereni casu */
         long endTime = System.currentTimeMillis();
         startTime = endTime - startTime;

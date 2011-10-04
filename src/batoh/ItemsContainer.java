@@ -33,6 +33,14 @@ public class ItemsContainer {
     }
 
     /**
+     * Nastavi pole polozek
+     * @param polozky
+     */
+    public void setPolozky(List<BatohItem> polozky) {
+        this.polozky = polozky;
+    }
+
+    /**
      * Seradi polozky dle pomeru cena/vaha
      */
     public void orderItems() {

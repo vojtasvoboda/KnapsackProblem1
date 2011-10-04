@@ -119,4 +119,8 @@ public class Batoh extends ItemsContainer {
         return this.nosnost;
     }
 
+    public void setAktualniCena(int aktualniCena) {
+        this.aktualniCena = aktualniCena;
+    }
+
 }
