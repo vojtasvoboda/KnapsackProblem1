@@ -7,15 +7,19 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
 /**
- *
+ * Reseni problemu batohu hrubou silou a jednoduchou heuristikou
  * @author Bc. Vojtěch Svoboda <svobovo3@fit.cvut.cz>
  */
 public class Main {
 
     /* nosnost batohu pro testovaci funkci */
     final static int NOSNOST = 32;
-    /* maximalni pocet nactenych instanci */
+    /* maximalni pocet nactenych instanci (spis pro testovani) */
     final static int MAX_INSTANCES = 60;
+    /* soubor s instancema (soubory jsou: 4, 10, 15, 20, 22, 25, 27, 30, 32, 35, 37, 40) */
+    final static int FILE_NO = 4;
+    /* pocet opakovani celeho vypoctu */
+    final static int ITERATION_NO = 1;
 
     /**
      * Polozky v baraku lze nacist bud z testovaci mnoziny - funkce loadTestItems,
@@ -34,21 +38,25 @@ public class Main {
         // loadTestItems(barak);
 
         /* nacteme instance ze souboru */
-        /* soubory jsou: 4, 10, 15, 20, 22, 25, 27, 30, 32, 35, 37, 40 */
-        String[][] instanceProblemu = loadFile(4);
+        String[][] instanceProblemu = loadFile(FILE_NO, false);
+
+        /* nacteme reseni problemu ze souboru */
+        String[][] reseniProblemu = loadFile(FILE_NO, true);
 
         /* zapnu mereni casu */
         long startTime = System.currentTimeMillis();
 
+        System.out.println("Vypis polozek: instance, optimalniCena, vypocitanaCena, zatizeni, nosnost");
+
         /* spustime cely vypocet nekolikrat */
-        for (int a = 0; a < 100; a++) {
+        for (int a = 0; a < ITERATION_NO; a++) {
             /* projdeme vsechny instance a vypocitame je */
             for ( int i = 0; (i < instanceProblemu.length) && (i < MAX_INSTANCES); i++ ) {
 
-                /* naplnime barak polozkami */
-                System.out.println("Startuji plneni baraku ze vstupni instance cislo " + instanceProblemu[i][0]);
                 /* preskocime prazdne radky */
                 if (instanceProblemu[i][0] == null) break;
+                
+                /* naplnime barak polozkami */
                 loadItemFromFile(barak, instanceProblemu[i]);
 
                 /* nastavime nosnost batohu */
@@ -56,18 +64,20 @@ public class Main {
 
                 /* ziskej polozky v batohu z baraku */
                 // System.out.println("Startuji Greedy algoritmus.");
-                // GreedyAlgorithm algGr = new GreedyAlgorithm(barak, batoh);
-                // algGr.computeStolenItems();
-                System.out.println("Startuji BruteForce algoritmus");
-                BruteForceAlgorithm algBf = new BruteForceAlgorithm(barak, batoh);
-                algBf.computeStolenItems();
+                GreedyAlgorithm algGr = new GreedyAlgorithm(barak, batoh);
+                algGr.computeStolenItems();
+                // System.out.println("Startuji BruteForce algoritmus");
+                // BruteForceAlgorithm algBf = new BruteForceAlgorithm(barak, batoh);
+                // algBf.computeStolenItems();
 
                 /* vypiseme polozky */
                 // System.out.println("Vypis polozek v batohu instance " + instanceProblemu[i][0]);
                 // batoh.writeItems();
-
-                System.out.println("Podarilo se ukrast veci v hodnote " + batoh.getAktualniCena() +
-                                   " s vytizenim batohu " + batoh.getAktualniZatizeni() + "/" + batoh.getNosnost());
+                System.out.println(instanceProblemu[i][0] + "\t" + 
+                                   reseniProblemu[i][2] + "\t" +
+                                   batoh.getAktualniCena() + "\t" +
+                                   batoh.getAktualniZatizeni() + "\t" +
+                                   batoh.getNosnost());
                 /* vycistime batoh i barak pred dalsi instanci */
                 barak.clear();
                 batoh.clear();
@@ -76,7 +86,7 @@ public class Main {
         /* konec mereni casu */
         long endTime = System.currentTimeMillis();
         startTime = endTime - startTime;
-        System.out.println("Vypocet trval " + startTime + "ms");
+        System.out.println("Vypocet souboru " + FILE_NO + " trval " + startTime + "ms");
     }
 
     /**
@@ -84,8 +94,13 @@ public class Main {
      * @param i - cislo souboru
      * @return Strin[][] - rozparsovany polozky v baraku
      */
-    private static String[][] loadFile(int i) {
-        String soubor = System.getProperty("user.dir") + "\\data\\knap_" + i + ".inst.dat";
+    private static String[][] loadFile(int i, boolean reseni) {
+        String soubor = "";
+        if ( reseni ) {
+            soubor = System.getProperty("user.dir") + "\\data\\knap_" + i + ".sol.dat";
+        } else {
+            soubor = System.getProperty("user.dir") + "\\data\\knap_" + i + ".inst.dat";
+        }
         System.out.println("Nacitam soubor: " + soubor + ", existuje: " + new File(soubor).exists());
         FileInputStream fstream = null;
         DataInputStream in = null;
@@ -124,10 +139,10 @@ public class Main {
     private static void loadItemFromFile(Barak barak, String[] parametry) {
         /* pocet zaznamu ke cteni */
         int pocetZaznamu = (parametry.length - 3) / 2;
-        System.out.println("Pocet zaznamu k nacteni je " + pocetZaznamu);
-        int j = pocetZaznamu - 1;
+        // System.out.println("Pocet zaznamu k nacteni je " + pocetZaznamu + " z radku instance " + parametry[0]);
+        int j = 3;
         for( int i = 0; i < pocetZaznamu; i++, j = j+2 ) {
-            System.out.println("Pridavam polozku {" + parametry[j] + "," + parametry[j+1] + "}");
+            // System.out.println("Pridavam polozku {" + parametry[j] + "," + parametry[j+1] + "}");
             barak.addItem(
                     new BatohItem(
                         Integer.parseInt(parametry[j+1]),
